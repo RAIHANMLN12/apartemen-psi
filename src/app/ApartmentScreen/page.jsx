@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from 'react';
 
 export default function ApartmentScreen() {
     const [apartments, setApartments] = useState([]);
@@ -34,51 +35,40 @@ export default function ApartmentScreen() {
       };
   
       fetchData();
-    }, [searchParams]);
+    }, [searchParams]); // Memindahkan fetchData ke dalam array dependensi
   
     if (loading) {
       return <div className="flex flex-col justify-center items-center h-screen">Loading...</div>;
     }
   
     return (
-      <div className="flex flex-col justify-center items-center space-y-5 my-5">
-        <h1 className="font-bold text-[24px] text-black">Rekomendasi Apartemen</h1>
-        {MetodePsi(apartments).map((item, index) => {
-            return (
-                <div key={index} className="border rounded-[15px] p-4 shadow-md w-[600px] space-y-5">
-                    <h2 className="text-[16px] font-semibold mb-2">{item.title_apartemen}</h2>
-                    <p className="text-gray-700 text-[14px]">Price: Rp {item.harga}</p>
-                    <p className="text-gray-700 text-[14px]">Luas: {item.luas}</p>
-                    <p className="text-gray-700 text-[14px]">Posisi: {item.posisi}</p>
-                    <p className="text-gray-700 text-[14px]">Fasilitas: {item.fasilitas_apartemen}</p>
-                    <p className="text-gray-700 text-[14px]">PSI Score: {item.psi}</p>
-                    <button className="bg-blue-500 text-white rounded-[15px] p-3" onClick={() => window.open(`${item.link_apartemen}`, "_blank")}>
-                      Lihat Apartemen
-                    </button>
-                </div>
-            );
-        })}
+      <Suspense>
+        <div className="flex flex-col justify-center items-center space-y-5 my-5">
+          <h1 className="font-bold text-[24px] text-black">Rekomendasi Apartemen</h1>
+          {MetodePsi(apartments).map((item, index) => {
+              return (
+                  <div key={index} className="border rounded-[15px] p-4 shadow-md w-[600px] space-y-5">
+                      <h2 className="text-[16px] font-semibold mb-2">{item.title_apartemen}</h2>
+                      <p className="text-gray-700 text-[14px]">Price: Rp {item.harga}</p>
+                      <p className="text-gray-700 text-[14px]">Luas: {item.luas}</p>
+                      <p className="text-gray-700 text-[14px]">Posisi: {item.posisi}</p>
+                      <p className="text-gray-700 text-[14px]">Fasilitas: {item.fasilitas_apartemen}</p>
+                      <p className="text-gray-700 text-[14px]">PSI Score: {item.psi}</p>
+                      <button className="bg-blue-500 text-white rounded-[15px] p-3" onClick={() => window.open(`${item.link_apartemen}`, "_blank")}>
+                        Lihat Apartemen
+                      </button>
+                  </div>
+              );
+          })}
 
-        {/* <h1> Tanpa Metode Psi</h1>
-        {apartments.length === 0 ? (
-          <p>No apartments found in the selected price range.</p>
-        ) : (
-          <div className="space-y-4">
-            {apartments.map((apartment, index) => (
-              <div key={index} className="border rounded-[15px] p-4 shadow-md w-[500px]">
-                <h2 className="text-[16px] font-semibold mb-2">{apartment.title_apartemen}</h2>
-                <p className="text-gray-700 text-[14px]">Price: {apartment.harga}</p>
-              </div>
-            ))}
-          </div>
-        )} */}
-
-        <button className="bg-blue-500 text-white w-[100px] rounded-[15px] p-2" onClick={() => router.push('/HomeScreen')}>
-          Kembali
-        </button>
-      </div>
+          <button className="bg-blue-500 text-white w-[100px] rounded-[15px] p-2" onClick={() => router.push('/HomeScreen')}>
+            Kembali
+          </button>
+        </div>
+      </Suspense>
     );
 }
+
 
 function MetodePsi(apartements) {
   const posisiMapping = {
